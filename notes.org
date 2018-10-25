@@ -19,27 +19,47 @@ Refer to [[*Starting with Emacs][Starting with Emacs]] for more.
 It's like markdown, but better.
 
 - It's just text!
-- Write notes as headlines
+- Each headline is a note
 - Built-in folding, tags, search
-- How to store/write links
 - Headlines can be TODOs
+- Can store/insert links
 - Can contain SRC blocks
 
 * Example 1: Keeping a research log
-- Keep track of commands used
-- Include screenshots
-  - Show code of (simplified) insert-screenshot
-- Tag headlines with topic
-- Make links to papers, commits, other headlines
-  - (maybe include links to pdftools?)
+- Example of [[https://github.com/fmdkdd/asobiba/blob/master/timeline.org][a real Org file]]
+- Tally your /efforts/
+- Keep track of valuable information for future you:
+  - logs, websites, shell commands, screenshots, ...
+
+- A custom command to insert a screenshot is easy to write:
+
+  #+BEGIN_SRC elisp
+  (defun insert-screenshot (file-name)
+    "Save screenshot to FILE-NAME and insert an Org link at point."
+    (interactive "FSave to file: ")
+    ;; Get absolute path
+    (let ((file (expand-file-name file-name)))
+      (call-process "import" nil nil nil file)
+      (insert (format "[[file:%s]]" file))
+      (org-redisplay-inline-images)))
+  #+END_SRC
 
 * Example 2: Tasks and Agenda
 - Show workflow
-  - Capture task
-  - Show all tasks in agenda
+  - [[elisp:org-capture][Capture]] task
+  - Show tasks in [[elisp:org-agenda][the agenda]]
   - Schedule/deadlines
   - Show week review
-- Show tasks file
+
+    #+BEGIN_SRC elisp
+    (setq org-agenda-window-setup 'current-window
+        org-agenda-custom-commands
+        '(("Rw" "Week in review"
+           agenda "" ((org-agenda-overriding-header "Week in review")
+                      (org-agenda-span 'week)
+                      (org-agenda-start-on-weekday 1)
+                      (org-agenda-start-with-log-mode t)))))
+    #+END_SRC
 
 * Example 3: Keeping track of grades
 - Built-in powerful spreadsheet
