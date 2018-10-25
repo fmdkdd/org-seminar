@@ -1,13 +1,19 @@
-* Emacs preliminary
-VERY QUICKLY.
+* Emacs is not just a text editor
+Emacs is a Lisp virtual machine made for manipulating text.
 
-Emacs is better thought of as a /platform/ rathan than a text-editor.
+I can execute code /anywhere/.
 
-- It's a Lisp machine
-- Fully customizable
-- [[info:Emacs][Self-documented]]
+(set-face-attribute 'default nil :family "Fira Mono" :height 80 :weight 'bold)
 
-Multiple distributions (Prelude, Spacemacs, DOOM).
+It's not just an editor that you use, but one that /grows/ with you.
+
+You can, and should tune it to your needs.
+
+- It's portable and runs basically everywhere.
+- It's fully customizable.
+- It's [[info:Emacs][self-documented]].
+
+Refer to [[*Starting with Emacs][Starting with Emacs]] for more.
 
 * Basic Org usage
 It's like markdown, but better.
@@ -51,6 +57,39 @@ Interpreting results in Org+Babel+Python to HTML.
 
 
 * Resources to go further
-- Links to Example 5 source
-- Reproducible research in Org
-- pdftools
+** Starting with Emacs
+Start with [[elisp:help-with-tutorial][the tutorial]] (C-h t).
+
+Then look at [[info:Emacs][the manual]].  You don't have to read all of it, but it's good to
+know where certain things are documented.  It's also helpfully structured with
+"things you will always use" first, and advanced features second.
+
+Another good resource is this 3-parts [[https://tuhdo.github.io/emacs-tutor.html][mini manual]].
+
+If you want to get a feel of what a fully-customized Emacs is capable of, look
+for [[https://github.com/emacs-tw/awesome-emacs#starter-kit][starter kits]].
+
+However, to get the most out of Emacs, it's best to build your own
+configuration, tailored to your needs.
+
+** Customizing Emacs
+Start by picking some [[https://github.com/emacs-tw/awesome-emacs][useful packages]].  I recommend a fuzzy prompt like ido, ivy
+or Helm, and [[https://magit.vc/][Magit]] if you often use git.
+
+Pretty soon, you'll want to write your own functions.  The manual has [[info:ELisp][a
+comprehensive chapter]] on the Emacs Lisp language.  If you are short on time,
+[[https://github.com/chrisdone/elisp-guide][this]] is a brief guide.  If you want to get more familiar with Lisps in general,
+there is no greater introduction than [[https://mitpress.mit.edu/sites/default/files/sicp/index.html][the wizard book]] (which will, incidentally,
+make you a wizard).
+
+Steal [[https://github.com/emacs-tw/awesome-emacs#noteworthy-configurations][from others]]!  If you find a useful functionality, you should steal and
+include it in your own configuration.  That's how your Emacs gets tailored to
+your needs.
+
+** Links
+- Link to Example 5 source
+
+- [[https://codearsonist.com/reading-for-programmers][An article]] on how to manage your bibtex citations and PDF notes using Emacs +
+  [[https://github.com/politza/pdf-tools][PDF tools]].
+- [[https://github.com/alegrand/SMPE][A course]] on reproducible research (not Org-specific).
+- [[https://www.jstatsoft.org/article/view/v046i03][A paper]] from one of the authors of Org on reproducible research.
