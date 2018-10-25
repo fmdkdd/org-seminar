@@ -1,0 +1,56 @@
+* Emacs preliminary
+VERY QUICKLY.
+
+Emacs is better thought of as a /platform/ rathan than a text-editor.
+
+- It's a Lisp machine
+- Fully customizable
+- [[info:Emacs][Self-documented]]
+
+Multiple distributions (Prelude, Spacemacs, DOOM).
+
+* Basic Org usage
+It's like markdown, but better.
+
+- It's just text!
+- Write notes as headlines
+- Built-in folding, tags, search
+- How to store/write links
+- Headlines can be TODOs
+- Can contain SRC blocks
+
+* Example 1: Keeping a research log
+- Keep track of commands used
+- Include screenshots
+  - Show code of (simplified) insert-screenshot
+- Tag headlines with topic
+- Make links to papers, commits, other headlines
+  - (maybe include links to pdftools?)
+
+* Example 2: Tasks and Agenda
+- Show workflow
+  - Capture task
+  - Show all tasks in agenda
+  - Schedule/deadlines
+  - Show week review
+- Show tasks file
+
+* Example 3: Keeping track of grades
+- Built-in powerful spreadsheet
+- Show off custom keybindings for faster input
+- (Can export to CSV)
+
+* Example 4: Write TP+Slides
+- Intro to babel (Python+R ?)
+- Use org-present
+- Export to HTML for students with/without answers
+  - Through EXCLUDE_TAGS
+
+* Example 5: Discovery experiment
+Interpreting results in Org+Babel+Python to HTML.
+
+
+* Resources to go further
+- Links to Example 5 source
+- Reproducible research in Org
+- pdftools
