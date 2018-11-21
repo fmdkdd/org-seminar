@@ -1,80 +1,383 @@
 * Emacs is not just a text editor
 Emacs is a Lisp virtual machine made for manipulating text.
 
-I can execute code /anywhere/.
+With Emacs, I can execute code /anywhere/.  If I put my cursor at the end of
+this snippet and press C-x C-e:
 
-(set-face-attribute 'default nil :family "Fira Mono" :height 80 :weight 'bold)
+(progn
+  (search-backward "Lisp" nil t 2)
+  (set-mark (point))
+  (forward-word))
 
-It's not just an editor that you use, but one that /grows/ with you.
+The word "Lisp" in the first sentence of this note is now highlighted.
 
-You can, and should tune it to your needs.
+I've just told Emacs to run three commands in sequence: first search for the
+"Lisp" string backward from point (what Emacs calls the cursor), and stop at the
+second occurence (because the first occurence is the first argument to
+search-backward); then activate the region (what Emacs calls the selection), and
+lasty advance the cursor by a word.
+
+We can call external processes just as easily:
+
+(progn
+  (forward-char)
+  (call-process "ls" nil t t "/"))
+
+Here we are calling ~ls /~ and injecting the results directly in our buffer.
+(The forward-char just advances point so that the results begin after a
+newline.)
+
+Text, external processes, windows... most of what you see in Emacs is accessible
+and customizable via Lisp.
+
+Emacs is not an editor that you just use, but one that /grows/ with you.  You
+can, and should tune it to your needs.
 
 - It's portable and runs basically everywhere.
 - It's fully customizable.
-- It's [[info:Emacs][self-documented]].
+- It's self-documented.  Not only it includes an [[info:Emacs][extensive user manual]], but
+  there is [[info:ELisp][a separate manual just on Emacs Lisp]].
 
-Refer to [[*Starting with Emacs][Starting with Emacs]] for more.
+And you don't need to start from scratch!  Emacs already includes a ton of
+functionality, and there are many, /many/ packages out there to extend it.
+
+See [[*Starting with Emacs][Starting with Emacs]] for more.
+
+Now we will focus on Org.
 
 * Basic Org usage
 It's like markdown, but better.
 
-- It's just text!
-- Each headline is a note
-- Built-in folding, tags, search
-- Headlines can be TODOs
-- Can store/insert links
-- Can contain SRC blocks
+** It's just text!
+An Org file is a text file, with few symbols (*bold* /emphatic/ ~code~), which
+makes it readable and portable like markdown.
+
+(You can even [[help:org-hide-emphasis-markers][hide the symbols]]!)
+
+** Each headline is a note
+Top-level headlines start with a star ~*~.  More stars indicate sub-headings,
+like ~#~ in markdown.
+
+#+BEGIN_SRC org
+,* A level 1 headline
+,** A level 2 headline
+,*** A level 3 headline
+,** Another level 2 headline
+,* Another level 1 headline
+#+END_SRC
+
+** Built-in folding and structured editing
+Any headline or item under point can be folded with TAB.
+
+You can move headlines up and down (M-<UP>, M-<DOWN>), and change the depth of
+single headlines (M-<LEFT>, M-<RIGHT>), or even of whole subtrees (M-S-<LEFT>,
+M-S-<RIGHT>).
+
+(more in the [[info:org#Structure%20editing][Org manual]])
+
+** Links are interactive
+Add a link with C-c C-l, or using the syntax:
+
+: [[protocol:url][description]]
+
+Using C-c C-o with a link under point, or clicking on it will browse to that
+location.
+
+** Links are extensible!
+What browsing to a link does depend on the protocol.
+
+Org supports multiple protocols.  HTTP links will open the link in your browser
+by default.  But you can also link to [[*Links are interactive][Org headlines]] (even in other files), to
+Emacs [[help:help][help]], to bibtex entries, to mails... and [[info:org#Adding%20hyperlink%20types][more]]!
+
+** Export to HTML, LaTeX...
+C-c C-e brings you the export dispatcher, where you can export your Org file(s)
+to HTML, LaTeX, or even ODT!  (And that's not counting other community options
+like [[https://github.com/jkitchin/scimax/blob/master/ox-word.el][ox-word]].)
+
+The export makes it easy to draft papers or share your notes with others.
+
+By customizing the export process, it is even possible to write books and power
+entire blogs using Org as the source material.
+
+- My whole [[https://github.com/fmdkdd/phd-manuscript/][PhD manuscript]] is written in Org, exporting to both HTML /and/ LaTeX.
+- [[https://www.atlanmod.org/emfviews/manual/user.html][The manual for the Eclipse tool]] I maintain is written entirely in Org, and is
+  exported both to HTML for Github pages and as an Eclipse help plugin for
+  offline consultation.
+
+We'll see an example of exporting from Org to an HTML blog in [[#ex:blog][Example 5]].
+
+** Org can evaluate programming languages blocks
+You can include snippets of code in Org with the BEGIN_SRC syntax:
+
+#+BEGIN_SRC python
+return sorted([5, 2, 4, 3, 1])
+#+END_SRC
+
+The advantage of Org source blocks however is that you can /evaluate/ them with
+C-c C-c with the block under point:
+
+#+BEGIN_SRC python
+return sorted([5, 2, 4, 3, 1])
+#+END_SRC
+
+#+RESULTS:
+| 1 | 2 | 3 | 4 | 5 |
+
+(You may need to (require 'ob-python) first.)
+
+Org can evaluate many common programming languages like this.  When exporting,
+Org can re-run all your code blocks to update the results.  You can even choose
+whether the code or the results are exported.
+
+Evaluating source blocks is very useful when writing tutorials ([[#ex:tp][Example 4]]), or
+doing literate data visualization ([[#ex:blog][Example 5]]).
+
+** Headlines can be tagged
+Tags are separated by colons ~:~ after the headline title, but on the same
+line.  Or use C-c C-q to change the tags for the nearest parent headline.
+
+#+BEGIN_SRC org
+,* A headline with tags                                   :org:tutorial:emacs:
+#+END_SRC
+
+Tags provide an additional way to organize your notes, beside the default
+hierarchy of headlines.
+
+Tags are useful for narrowing down notes in large files with org-sparse-tree
+(C-c /).  We'll see that in the [[#ex:log][first example]].
 
 * Example 1: Keeping a research log
-- Example of [[https://github.com/fmdkdd/asobiba/blob/master/timeline.org][a real Org file]]
-- Tally your /efforts/
-- Keep track of valuable information for future you:
-  - logs, websites, shell commands, screenshots, ...
+:PROPERTIES:
+:CUSTOM_ID: ex:log
+:END:
 
-- A custom command to insert a screenshot is easy to write:
+** You should keep log too!
+I cannot recommend enough keeping a log of your research.  Even if you don't
+plan on using Org to do it, even if it's just on paper.  Keeping a log has
+immediate benefits:
 
-  #+BEGIN_SRC elisp
-  (defun insert-screenshot (file-name)
-    "Save screenshot to FILE-NAME and insert an Org link at point."
-    (interactive "FSave to file: ")
-    ;; Get absolute path
-    (let ((file (expand-file-name file-name)))
-      (call-process "import" nil nil nil file)
-      (insert (format "[[file:%s]]" file))
-      (org-redisplay-inline-images)))
-  #+END_SRC
+- Writing down your thoughts can help clarifying them.  Even if you never go
+  back to your notes, just writing down your thoughts can help solve the
+  problems you are working on.
+
+- It's a place to put down all the information you may need later.  Links to
+  websites, useful shell commands, excerpts of logs, screenshots...  It's
+  tremendously useful to be able to go back one year earlier and /see/ the
+  problem you were dealing with at the time, and why you choose that solution
+  over the others.
+
+Once you accumulate notes (or fill logbooks), you now have a visual measure of
+your /efforts/.  Working on research problems, a lot of time it may feel like we
+do not make actual measurable progress.  This can be demotivating.  Instead,
+when you write down what you did for the day, even if it failed, it /feels/ like
+you made some progress, even it was eliminating a dead-end.  You can then look
+back at all the failed approaches and actually appreciate the work that has been
+required to reach your goal.
+
+** I'll show you mine
+Let's look at [[https://github.com/fmdkdd/asobiba/blob/master/timeline.org][an Org log]].  Every top-level headline is a day.  Sub-headings
+concern different tasks or projects, and are tagged appropriately.
+
+With tags, we can easily search for all notes regarding my [[https://github.com/fmdkdd/gbs][GameBoy Sound
+emulator]] by looking for the ~gbs~ tag: C-c / m gbs RET.
+
+Sometimes I forget to tag notes, but it's okay I can still search through the
+file with C-s, or with ~C-c / r~.
+
+** Smooth screenshot insertion
+As a good picture is worth a thousand words, I try to include relevant
+screenshots in my notes.  I wrote a small Lisp function to make it
+friction-less:
+
+#+BEGIN_SRC elisp
+(defun insert-screenshot (file-name)
+  "Save screenshot to FILE-NAME and insert an Org link at point."
+  (interactive "FSave to file: ")
+  (let ((absolute-path (expand-file-name file-name)))
+    (call-process "import" nil nil nil absolute-path)
+    (insert (format "[[file:%s]]" absolute-path))
+    (org-redisplay-inline-images)))
+#+END_SRC
+
+After evaluating the above block, we can M-x insert-screenshot to have the image
+inserted at the cursor location.
 
 * Example 2: Tasks and Agenda
-- Show workflow
-  - [[elisp:org-capture][Capture]] task
-  - Show tasks in [[elisp:org-agenda][the agenda]]
-  - Schedule/deadlines
-  - Show week review
+:PROPERTIES:
+:CUSTOM_ID: ex:agenda
+:END:
 
-    #+BEGIN_SRC elisp
-    (setq org-agenda-window-setup 'current-window
-        org-agenda-custom-commands
-        '(("Rw" "Week in review"
-           agenda "" ((org-agenda-overriding-header "Week in review")
-                      (org-agenda-span 'week)
-                      (org-agenda-start-on-weekday 1)
-                      (org-agenda-start-with-log-mode t)))))
-    #+END_SRC
+** Headlines can be tasks
+Adding a TODO in front of a headline title turns it into a task.
+
+#+BEGIN_SRC org
+,* TODO Buy bread
+#+END_SRC
+
+You can mark the task as DONE with C-c C-t, or you can define your [[info:org#TODO%20extensions][own
+workflows]].
+
+You can also schedule tasks (C-c C-s) for a particular day or time, or turn
+tasks into deadlines (C-c C-d).  Org includes an agenda where you can see tasks
+from all your Org files, and you can customize the view to your needs.
+
+** My agenda workflow
+Let's see an example.  My workflow is that whenever I need to remember doing
+something, I [[elisp:org-capture][capture]] the task and refile it.  They all go into a single
+~tasks.org~ file with loose hierarchies.  I rarely interact with the tasks.org
+file though, and just use [[elisp:org-agenda][the agenda]] instead.
+
+In the agenda, I have defined a custom view with all the tasks for the week, the
+upcoming deadlines and unscheduled tasks.  Every day, if I have scheduled tasks
+I work on them, and when I don't have scheduled tasks anymore I pick some
+unscheduled ones and schedule them.  After I finish working on a task, I mark
+them as DONE.
+
+Every week we have our flash team meeting, and I can look at what I did in the
+previous week with another custom view:
+
+#+BEGIN_SRC elisp
+(setq org-agenda-window-setup 'current-window
+    org-agenda-custom-commands
+    '(("Rw" "Week in review"
+       agenda "" ((org-agenda-overriding-header "Week in review")
+                  (org-agenda-span 'week)
+                  (org-agenda-start-on-weekday 1)
+                  (org-agenda-start-with-log-mode t)))))
+#+END_SRC
+
+It's my workflow, and it doesn't have to be yours.  Again, the greatness of
+Emacs is the ability to tailor it to your needs.  Here are [[https://orgmode.org/worg/org-gtd-etc.html][other examples]] that
+may inspire you.
 
 * Example 3: Keeping track of grades
-- Built-in powerful spreadsheet
-- Show off custom keybindings for faster input
-- (Can export to CSV)
+:PROPERTIES:
+:CUSTOM_ID: ex:grades
+:END:
+
+** The Org spreadsheet
+Org comes with a spreadsheet.  It doesn't rival Excel in capabilities, but it
+can perform light table calculations.  And it's still just text that you can
+export to HTML, navigate with Lisp, etc.
+
+See [[info:org#Tables][Tables]] in the Org manual for creating tables and crunching numbers.
+
+** Example of a students grades table
+I use it mostly for keeping track of student grades.  Here is an example of the
+tables I create (names of the guilty have been replaced with [[https://en.wikipedia.org/wiki/List_of_valkyrie_names][Valkyries]]):
+
+| Name          |    1 |   2 |   3 |   4 |   5 | Grade |
+|---------------+------+-----+-----+-----+-----+-------|
+| Brynhildr     |    1 |   1 |   1 |   1 |   1 |     5 |
+| Eir           |    1 |  .5 |   1 |     |     |   2.5 |
+| Geirahöð      |    1 |   1 |   1 |   1 |     |     4 |
+| Geiravör      |    1 |   1 |   1 |  .5 |     |   3.5 |
+| Geirdriful    |    1 |   1 |   1 |   1 |     |     4 |
+| Geirönul      |      |  .5 |  .5 |  .5 |     |   1.5 |
+| Geirskögul    |   .5 |   1 |   1 |   1 |   1 |   4.5 |
+| Göll          |   .5 |   1 |  .5 |  .5 |     |   2.5 |
+| Göndul        |   .5 |   1 |   1 |  .5 |     |    3. |
+| Guðr          |    1 |  .5 |   1 |  .5 |  .5 |   3.5 |
+| Herfjötur     |    1 |   1 |  .5 |  .5 |  .5 |   3.5 |
+| Herja         |      |     |     |     |     |     0 |
+| Hlaðguðr      |   .5 |   1 |   1 |     |     |   2.5 |
+| Hildr         |    1 |     |  .5 |  .5 |  .5 |   2.5 |
+| Hjalmþrimul   |    1 |   1 |  .5 |  .5 |     |    3. |
+| Hervör alvitr |    1 |     |  .5 |     |     |   1.5 |
+| Hjörþrimul    |    1 |   1 |   1 |  .5 |     |   3.5 |
+| Hlökk         |      |  .5 |  .5 |     |     |    1. |
+| Hrist         |    1 |   1 |  .5 |  .5 |  .5 |   3.5 |
+| Hrund         |   .5 |  .5 |   1 |     |     |    2. |
+| Kára          |   .5 |   1 |   1 |  .5 |   1 |    4. |
+| Mist          |    1 |   1 |   1 |  .5 |   1 |   4.5 |
+| Ölrún         |    1 |   1 |  .5 |  .5 |  .5 |   3.5 |
+| Randgríðr     |   .5 |   1 |   1 |  .5 |     |    3. |
+| Ráðgríðr      |    1 |   1 |  .5 |  .5 |     |    3. |
+| Reginleif     |      |   1 |   1 |     |   1 |     3 |
+| Róta          |    1 |  .5 |   1 |  .5 |     |    3. |
+|---------------+------+-----+-----+-----+-----+-------|
+| Answers       | 19.5 | 21. | 21. | 12. | 7.5 |       |
+|---------------+------+-----+-----+-----+-----+-------|
+| Mean          |      |     |     |     |     |  3.00 |
+| Std Deviation |      |     |     |     |     |  1.12 |
+#+TBLFM: @2$7..@28$7=vsum($2..$6);NE::@29$2..@29$6=vsum(@I..@II)::@30$7=vmean(@I..@II);%.2f::@31$7=vsdev(@I..@II);%.2f
+
+Org has structured editing for tables: I can move rows and columns around, I can
+add new lines or columns... and it's still just text.
+
+I have one column for each question on the exam.  Points are either zero
+(empty), half (.5) or full (1).  The total for each student is summed in the
+Grade column automatically.
+
+Answers to all questions can also be seen in the Answers row.  Question 5 was
+more difficult it seems.
+
+Org can also compute the mean and standard deviation for the grades.  These
+formulas are added in the TBLFM line below the table (see [[info:org#The%20spreadsheet][The spreadsheet]] part
+of the Org manual).
+
+In fact, the Org spreadsheet can use either the Emacs built-in Calc calculator,
+or arbitrary Lisp, so you could take the customization pretty far.
+
+** Filling the table faster
+As an example, to speed up filling out the table, I have created very simple
+macros that input either "1" or ".5" and go to the next column at the press of a
+button:
+
+#+name: fast input of answers
+#+BEGIN_SRC elisp :results silent
+(fset 'js-full [?1 tab])
+(fset 'js-yes  [?. ?5 tab])
+(fset 'js-no   [tab])
+
+(local-set-key (kbd "z") 'js-full)
+(local-set-key (kbd "x") 'js-yes)
+(local-set-key (kbd "c") 'js-no)
+#+END_SRC
+
+After evaluating that block, I can use the keys Z, X and C as shortcuts
+(local-set-key rebinds the key only in the current buffer).  This allows me to
+fill out the table as I look at the student copy, without looking at the
+keyboard or the screen.
+
+(To unset the shortcuts, evaluate the next block:)
+
+#+name: unset the shortcuts above
+#+BEGIN_SRC elisp :results silent
+(local-unset-key (kbd "z"))
+(local-unset-key (kbd "x"))
+(local-unset-key (kbd "c"))
+#+END_SRC
+
+** Exporting to CSV
+Finally, I can export the table to CSV, to share it with people who have to work
+with inferior programs.
+
+#+BEGIN_SRC elisp :results value silent
+(save-excursion
+  (search-backward "Brynhildr")
+  (org-table-export "/tmp/org-table.csv" "orgtbl-to-csv"))
+#+END_SRC
+
+[[file:/tmp/org-table.csv]]
 
 * Example 4: Write TP+Slides
+:PROPERTIES:
+:CUSTOM_ID: ex:tp
+:END:
+
 - Intro to babel (Python+R ?)
 - Use org-present
 - Export to HTML for students with/without answers
   - Through EXCLUDE_TAGS
 
 * Example 5: Discovery experiment
-Interpreting results in Org+Babel+Python to HTML.
+:PROPERTIES:
+:CUSTOM_ID: ex:blog
+:END:
 
+Interpreting results in Org+Babel+Python to HTML.
 
 * Resources to go further
 ** Starting with Emacs
