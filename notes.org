@@ -1,7 +1,7 @@
 * Emacs is not just a text editor
 Emacs is a Lisp virtual machine made for manipulating text.
 
-With Emacs, I can execute code /anywhere/.  If I put my cursor at the end of
+With Emacs, you can execute code /anywhere/.  If I put my cursor at the end of
 this snippet and press C-x C-e:
 
 (progn
@@ -45,7 +45,7 @@ See [[*Starting with Emacs][Starting with Emacs]] for more.
 
 Now we will focus on Org.
 
-* Basic Org usage
+* Org overview
 It's like markdown, but better.
 
 ** It's just text!
@@ -83,6 +83,8 @@ Add a link with C-c C-l, or using the syntax:
 Using C-c C-o with a link under point, or clicking on it will browse to that
 location.
 
+Here is [[info:org#Hyperlinks][a link to the Org manual section on links]].
+
 ** Links are extensible!
 What browsing to a link does depend on the protocol.
 
@@ -114,8 +116,11 @@ You can include snippets of code in Org with the BEGIN_SRC syntax:
 return sorted([5, 2, 4, 3, 1])
 #+END_SRC
 
-The advantage of Org source blocks however is that you can /evaluate/ them with
-C-c C-c with the block under point:
+Here we are telling Org that the code is in Python, so we get proper syntax
+highlighting.  But that's not all!
+
+The advantage of Org source blocks is that you can /evaluate/ them with C-c C-c
+with the block under point:
 
 #+BEGIN_SRC python
 return sorted([5, 2, 4, 3, 1])
@@ -126,16 +131,19 @@ return sorted([5, 2, 4, 3, 1])
 
 (You may need to (require 'ob-python) first.)
 
+We get the sorted list, parsed automatically as an Org table (so we can reuse it
+in the Org document, or even pass it to other source blocks!).
+
 Org can evaluate many common programming languages like this.  When exporting,
 Org can re-run all your code blocks to update the results.  You can even choose
-whether the code or the results are exported.
+whether to export the code, the results, or both.
 
 Evaluating source blocks is very useful when writing tutorials ([[#ex:tp][Example 4]]), or
 doing literate data visualization ([[#ex:blog][Example 5]]).
 
 ** Headlines can be tagged
-Tags are separated by colons ~:~ after the headline title, but on the same
-line.  Or use C-c C-q to change the tags for the nearest parent headline.
+Tags are on the same line as the headline title, but separated by colons ~:~.
+Or use C-c C-q to change the tags for the nearest parent headline.
 
 #+BEGIN_SRC org
 ,* A headline with tags                                   :org:tutorial:emacs:
@@ -171,9 +179,9 @@ Once you accumulate notes (or fill logbooks), you now have a visual measure of
 your /efforts/.  Working on research problems, a lot of time it may feel like we
 do not make actual measurable progress.  This can be demotivating.  Instead,
 when you write down what you did for the day, even if it failed, it /feels/ like
-you made some progress, even it was eliminating a dead-end.  You can then look
-back at all the failed approaches and actually appreciate the work that has been
-required to reach your goal.
+you made some progress, even if it was just eliminating a dead-end.  You can
+then look back at all the failed approaches and actually appreciate the work
+that has been required to reach your goal.
 
 ** I'll show you mine
 Let's look at [[https://github.com/fmdkdd/asobiba/blob/master/timeline.org][an Org log]].  Every top-level headline is a day.  Sub-headings
@@ -199,6 +207,15 @@ friction-less:
     (insert (format "[[file:%s]]" absolute-path))
     (org-redisplay-inline-images)))
 #+END_SRC
+
+This is how you define custom commands in Emacs Lisp.  The ~interactive~ macro
+says we are defining a command that should be called interactively (via M-x)
+rather than programmatically, and it also specifies the user prompt message to
+get the file path.  Then we get expand this path to an absolute one.  We pass
+the absolute path to ImageMagick's import program, which does the
+screenshotting and saves the file.  Then we insert the Org-format link to the
+file in the current buffer, and finally we tell Org to redisplay images from the
+buffer so we can see it directly.
 
 After evaluating the above block, we can M-x insert-screenshot to have the image
 inserted at the cursor location.
@@ -264,8 +281,9 @@ export to HTML, navigate with Lisp, etc.
 See [[info:org#Tables][Tables]] in the Org manual for creating tables and crunching numbers.
 
 ** Example of a students grades table
-I use it mostly for keeping track of student grades.  Here is an example of the
-tables I create (names of the guilty have been replaced with [[https://en.wikipedia.org/wiki/List_of_valkyrie_names][Valkyries]]):
+I use the spreadsheet mostly for keeping track of student grades.  Here is an
+example of the tables I create (names of the guilty have been replaced with
+[[https://en.wikipedia.org/wiki/List_of_valkyrie_names][Valkyries]]):
 
 | Name          |    1 |   2 |   3 |   4 |   5 | Grade |
 |---------------+------+-----+-----+-----+-----+-------|

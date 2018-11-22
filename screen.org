@@ -1,0 +1,193 @@
+* Emacs is not just a text editor
+Emacs is a Lisp virtual machine made for manipulating text.
+
+(progn
+  (search-backward "Lisp" nil t 2)
+  (set-mark (point))
+  (forward-word))
+
+We can call external processes just as easily:
+
+(progn
+  (forward-char)
+  (call-process "ls" nil t t "/"))
+
+Emacs is not an editor that you just use, but one that /grows/ with you.
+
+- It's portable and runs basically everywhere.
+- It's fully customizable.
+- It's self-documented: [[info:Emacs][User manual]]  [[info:ELisp][Emacs Lisp manual]]
+
+* Org overview
+It's like markdown, but better.
+
+** It's just text!
+*bold* /emphatic/ ~code~
+
+** Each headline is a note
+#+BEGIN_SRC org
+,* A level 1 headline
+,** A level 2 headline
+,*** A level 3 headline
+,** Another level 2 headline
+,* Another level 1 headline
+#+END_SRC
+
+** Built-in folding and structured editing
+TAB to fold
+M-<UP>, M-<DOWN> move headlines
+M-<LEFT>, M-<RIGHT> change their depth
+M-S-<LEFT>, M-S-<RIGHT> shift subtrees
+
+** Links are interactive
+[[info:org#Hyperlinks][Link to the Org manual section on links]].
+
+** Links are extensible!
+[[*Links are interactive][Link to Org headlines]]
+[[help:help][Link to Emacs help]]
+[[elisp:view-emacs-news][Link to execute Emacs Lisp code]]
+To bibtex entries, to mails... and [[info:org#Adding%20hyperlink%20types][more]]!
+
+** Export to HTML, LaTeX...
+C-c C-e brings the export dispatcher
+
+** Org can evaluate programming languages blocks
+#+BEGIN_SRC python
+return sorted([5, 2, 4, 3, 1])
+#+END_SRC
+
+#+RESULTS:
+| 1 | 2 | 3 | 4 | 5 |
+
+(require 'ob-python)
+
+** Headlines can be tagged
+#+BEGIN_SRC org
+,* A headline with tags                                   :org:tutorial:emacs:
+#+END_SRC
+
+* Example 1: Keeping a research log
+** You should keep log too!
+Keeping a log has immediate benefits:
+
+- Writing down your thoughts can help clarifying them
+- It's a vault for information you may need later
+- Seeing your effort helps keeping motivated
+
+** I'll show you mine
+C-c / m search notes with tag
+C-c / r search notes with arbitrary text
+
+** Smooth screenshot insertion
+#+BEGIN_SRC elisp
+(defun insert-screenshot (file-name)
+  "Save screenshot to FILE-NAME and insert an Org link at point."
+  (interactive "FSave to file: ")
+  (let ((absolute-path (expand-file-name file-name)))
+    (call-process "import" nil nil nil absolute-path)
+    (insert (format "[[file:%s]]" absolute-path))
+    (org-redisplay-inline-images)))
+#+END_SRC
+
+M-x insert-screenshot
+
+* Example 2: Tasks and Agenda
+** Headlines can be tasks
+#+BEGIN_SRC org
+,* TODO Buy bread
+#+END_SRC
+
+C-c C-t to mark as DONE
+C-c C-s to schedule
+C-c C-d to turn into deadlines
+M-x org-agenda to see the week's tasks
+
+** My agenda workflow
+- Capture, refile, schedule, work
+- Weekly review
+
+#+BEGIN_SRC elisp
+(setq org-agenda-window-setup 'current-window
+    org-agenda-custom-commands
+    '(("Rw" "Week in review"
+       agenda "" ((org-agenda-overriding-header "Week in review")
+                  (org-agenda-span 'week)
+                  (org-agenda-start-on-weekday 1)
+                  (org-agenda-start-with-log-mode t)))))
+#+END_SRC
+
+* Example 3: Keeping track of grades
+** The Org spreadsheet
+
+** Example of a students grades table
+
+| Name        |    1 |   2 |   3 |   4 |   5 | Grade |
+|-------------+------+-----+-----+-----+-----+-------|
+| Brynhildr   |    1 |   1 |   1 |   1 |   1 |     5 |
+| Eir         |    1 |  .5 |   1 |     |     |   2.5 |
+| Geirahöð    |    1 |   1 |   1 |   1 |     |     4 |
+| Geiravör    |    1 |   1 |   1 |  .5 |     |   3.5 |
+| Geirdriful  |    1 |   1 |   1 |   1 |     |     4 |
+| Geirönul    |      |  .5 |  .5 |  .5 |     |   1.5 |
+| Geirskögul  |   .5 |   1 |   1 |   1 |   1 |   4.5 |
+| Göll        |   .5 |   1 |  .5 |  .5 |     |   2.5 |
+| Göndul      |   .5 |   1 |   1 |  .5 |     |    3. |
+| Guðr        |    1 |  .5 |   1 |  .5 |  .5 |   3.5 |
+| Herfjötur   |    1 |   1 |  .5 |  .5 |  .5 |   3.5 |
+| Herja       |      |     |     |     |     |     0 |
+| Hlaðguðr    |   .5 |   1 |   1 |     |     |   2.5 |
+| Hildr       |    1 |     |  .5 |  .5 |  .5 |   2.5 |
+| Hjalmþrimul |    1 |   1 |  .5 |  .5 |     |    3. |
+| Hervör      |    1 |     |  .5 |     |     |   1.5 |
+| Hjörþrimul  |    1 |   1 |   1 |  .5 |     |   3.5 |
+| Hlökk       |      |  .5 |  .5 |     |     |    1. |
+| Hrist       |    1 |   1 |  .5 |  .5 |  .5 |   3.5 |
+| Hrund       |   .5 |  .5 |   1 |     |     |    2. |
+| Kára        |   .5 |   1 |   1 |  .5 |   1 |    4. |
+| Mist        |    1 |   1 |   1 |  .5 |   1 |   4.5 |
+| Ölrún       |    1 |   1 |  .5 |  .5 |  .5 |   3.5 |
+| Randgríðr   |   .5 |   1 |   1 |  .5 |     |    3. |
+| Ráðgríðr    |    1 |   1 |  .5 |  .5 |     |    3. |
+| Reginleif   |      |   1 |   1 |     |   1 |     3 |
+| Róta        |    1 |  .5 |   1 |  .5 |     |    3. |
+|-------------+------+-----+-----+-----+-----+-------|
+| Answers     | 19.5 | 21. | 21. | 12. | 7.5 |       |
+|-------------+------+-----+-----+-----+-----+-------|
+| Mean        |      |     |     |     |     |  3.00 |
+| Std Dev     |      |     |     |     |     |  1.12 |
+#+TBLFM: @2$7..@28$7=vsum($2..$6);NE::@29$2..@29$6=vsum(@I..@II)::@30$7=vmean(@I..@II);%.2f::@31$7=vsdev(@I..@II);%.2f
+
+** Filling the table faster
+#+name: fast input of answers
+#+BEGIN_SRC elisp :results silent
+(fset 'js-full [?1 tab])
+(fset 'js-yes  [?. ?5 tab])
+(fset 'js-no   [tab])
+
+(local-set-key (kbd "z") 'js-full)
+(local-set-key (kbd "x") 'js-yes)
+(local-set-key (kbd "c") 'js-no)
+#+END_SRC
+
+#+name: unset the shortcuts above
+#+BEGIN_SRC elisp :results silent
+(local-unset-key (kbd "z"))
+(local-unset-key (kbd "x"))
+(local-unset-key (kbd "c"))
+#+END_SRC
+
+** Exporting to CSV
+#+BEGIN_SRC elisp :results value silent
+(save-excursion
+  (search-backward "Brynhildr")
+  (org-table-export "/tmp/org-table.csv" "orgtbl-to-csv"))
+#+END_SRC
+
+* Example 4: Write TP+Slides
+- Intro to babel (Python+R ?)
+- Use org-present
+- Export to HTML for students with/without answers
+  - Through EXCLUDE_TAGS
+
+* Example 5: Discovery experiment
+Interpreting results in Org+Babel+Python to HTML.
