@@ -1,3 +1,19 @@
+#+BEGIN_SRC elisp :results silent
+(defun sync-heading-with-buffer ()
+  "Move to the same heading in another buffer."
+  (interactive)
+  (unless (org-before-first-heading-p)
+    ;; Find current heading for current buffer
+    (let ((heading (org-get-heading)))
+      ;; Goto heading in slave buffer
+      (with-selected-window (get-buffer-window "notes.org" 'all-frames)
+        (goto-char (point-min))
+        (search-forward heading)
+        (recenter-top-bottom 0)))))
+
+(add-hook 'post-command-hook #'sync-frames-headlines nil 'local)
+#+END_SRC
+
 * Emacs is not just a text editor
 Emacs is a Lisp virtual machine made for manipulating text.
 
