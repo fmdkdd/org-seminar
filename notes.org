@@ -380,20 +380,73 @@ with inferior programs.
 
 [[file:/tmp/org-table.csv]]
 
-* Example 4: Write TP+Slides
+* Example 4: Your tutorial in one document
 :PROPERTIES:
 :CUSTOM_ID: ex:tp
 :END:
+Giving a class tutorial in computer science involves to edit many
+files. Most of the time you have one file with tutorial instructions
+and questions. That file should be printable, and better be published
+online so that students can copy/paste code snippets. You may also
+have a source code file that contains the tutorial solution to show it
+during the class and maybe distribute it at the end. Finally, you'll
+certainly pair this with some slides to point out to notions saw
+during the lecture.
 
+Org is powerful enough to produce all of these in one document.
+
+** I'll show you mine
+Let's look at a [[https://rcherrueau.github.io/teaching/virt2018/index.org][tutorial]] of mine in Org. Every top-level headline is a
+tutorial instruction (e.g., Requirements, Setup with Vagrant tool) , a
+question (e.g., Exercise: Start & Operate Virtualized Env.) or a
+lecture notion (e.g., What is Virtualization).
+
+I can easily call [[help:org-latex-export-to-pdf][~org-latex-export-to-pdf~]] to export the document as
+index.pdf and open it in a PDF viewer. I can do the same with
+[[help:org-html-export-to-html][~org-html-export-to-html~]] to export the document as index.html and
+open it [[https://rcherrueau.github.io/teaching/virt2018/][in the browser]].
+
+Note that some of the headlines contain the ~:solution:~ tag. These
+headlines reference to exercise solutions. I use the ~:solution:~ tag
+in conjunction with ~#+EXCLUDE_TAGS: solution~ to hide or not this
+information in exported document.
+
+** org-present to give presentations
+[[https://github.com/rlister/org-present][org-present]] is a light-weight simple presentation mode. The Emacs
+editor is used in a full-screen mode as the presentation engine, and
+headings of the Org-mode buffer are presented directly.
+
+Start the presentation with M-x org-present. Then use left and right
+keys to move from one headline to another and C-c C-q to quit.
+
+(You may need to install org-present from [[https://orgmode.org/worg/org-contrib/][org-plus-contrib]] first.)
+
+* Example 5: Write and test your lab with Babel
+:PROPERTIES:
+:CUSTOM_ID: ex:blog
+:END:
+
+** A quick, /quick/ intro to Org Babel
+[[https://orgmode.org/worg/org-contrib/babel/][Babel]] is the Org ability to write, execute and connect blocks of
+source code in a Org document. Features include evaluating source code
+in one of the 40 [[info:org#Languages][supported language]] (emacs-lisp, python, even Graphviz
+dot); Formatting evaluation output as text, table, html, code, ... and
+pass it to another block; Extracting source code blocks in executable
+scripts (and propagate changes in scripts [[help:org-babel-detangle][back to the original Org
+document]]) in conjunction with the support of [[info:org#Noweb%20reference%20syntax][noweb]] syntax for literate
+programming and reproducible research.
+
+This section give you a first glimpse. Thus, I recommend to read the
+[[info:org#Working%20with%20source%20code][working with source code]] org manual for further
+
+** The noweb syntax
 - Intro to babel (Python+R ?)
 - Use org-present
 - Export to HTML for students with/without answers
   - Through EXCLUDE_TAGS
 
-* Example 5: Discovery experiment
-:PROPERTIES:
-:CUSTOM_ID: ex:blog
-:END:
+** Application to lab
+
 
 Interpreting results in Org+Babel+Python to HTML.
 
