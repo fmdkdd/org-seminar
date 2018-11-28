@@ -384,42 +384,77 @@ with inferior programs.
 :PROPERTIES:
 :CUSTOM_ID: ex:tp
 :END:
-Giving a class tutorial in computer science involves to edit many
+Giving a class tutorial in computer science involves editing many
 files. Most of the time you have one file with tutorial instructions
-and questions. That file should be printable, and better be published
+and questions. This file should be printable, and better be published
 online so that students can copy/paste code snippets. You may also
-have a source code file that contains the tutorial solution to show it
-during the class and maybe distribute it at the end. Finally, you'll
-certainly pair this with some slides to point out to notions saw
-during the lecture.
+have a source code file which contains the tutorial solution to
+show/evaluate it during the class and maybe distribute it at the end.
+Finally, you'll undoubtedly pair this with some slides to point out to
+lecture notions.
 
-Org is powerful enough to produce all of these in one document.
+Tracking all these files is nagging. Doing a modification in one
+implies modifications in others. Fortunately, Org is powerful enough
+to produce all of these in one document.
 
-** I'll show you mine
-Let's look at a [[https://rcherrueau.github.io/teaching/virt2018/index.org][tutorial]] of mine in Org. Every top-level headline is a
-tutorial instruction (e.g., Requirements, Setup with Vagrant tool) , a
-question (e.g., Exercise: Start & Operate Virtualized Env.) or a
-lecture notion (e.g., What is Virtualization).
+** A tutorial of mine
+Let's look at a [[https://rcherrueau.github.io/teaching/virt2018/index.org][tutorial]] of mine in Org. Every top-level headline is
+either a tutorial instruction (e.g., Requirements, Setup with Vagrant
+tool), a question (e.g., Exercise: Start & Operate Virtualized Env.)
+or a lecture notion (e.g., What is Virtualization).
 
-I can easily call [[help:org-latex-export-to-pdf][~org-latex-export-to-pdf~]] to export the document as
-index.pdf and open it in a PDF viewer. I can do the same with
-[[help:org-html-export-to-html][~org-html-export-to-html~]] to export the document as index.html and
-open it [[https://rcherrueau.github.io/teaching/virt2018/][in the browser]].
+We can easily call [[help:org-latex-export-to-pdf][~org-latex-export-to-pdf~]] to export the document as
+index.pdf and print it. We can also call [[help:org-html-export-to-html][~org-html-export-to-html~]] to
+export the document as index.html and [[https://rcherrueau.github.io/teaching/virt2018/][publish it online]]. More
+generally, We can do C-c C-e ([[help:org-export-dispatch][~org-export-dispatch~]]) to get access to
+common dispatchers and export it into plain text for instance.
 
-Note that some of the headlines contain the ~:solution:~ tag. These
-headlines reference to exercise solutions. I use the ~:solution:~ tag
-in conjunction with ~#+EXCLUDE_TAGS: solution~ to hide or not this
-information in exported document.
+Some of the headlines contain the ~solution~ tag: C-c / m solution
+RET. These headlines encompass exercise solutions. In conjunction with
+the ~#+EXCLUDE_TAGS: solution~ [[info:org#Export%20settings][export settings]], Org hides solutions
+from the export, which is useful to keep track of solutions without
+disclosing them to students. Then, commenting the ~EXCLUDE_TAGS~ out
+reveals the solutions to students when it is time to share them.
+
+#+CAPTION: Comment the ~EXCLUDE_TAGS~ to reveals exercise
+#+CAPTION: solutions from the export
+#+BEGIN_SRC org
+# #+EXCLUDE_TAGS: solution
+#+END_SRC
 
 ** org-present to give presentations
-[[https://github.com/rlister/org-present][org-present]] is a light-weight simple presentation mode. The Emacs
-editor is used in a full-screen mode as the presentation engine, and
-headings of the Org-mode buffer are presented directly.
+[[https://github.com/rlister/org-present][org-present]] is a light-weight simple presentation mode. It turns the
+Emacs editor in a presentation engine that displays headings of the
+Org document one after the other. Combining it with the variables that
+hide the symbols and cursor, it turns your Org document into a step by
+step tutorial that looks good on a beamer.
 
-Start the presentation with M-x org-present. Then use left and right
-keys to move from one headline to another and C-c C-q to quit.
+#+BEGIN_SRC elisp
+(eval-after-load "org-present"
+  '(progn
+     (add-hook 'org-present-mode-hook
+               (lambda ()
+                 (org-present-big)
+                 (org-display-inline-images)
+                 (org-present-hide-cursor)
+                 (org-present-read-only)
+                 (setq org-hide-emphasis-markers t)))
+     (add-hook 'org-present-mode-quit-hook
+               (lambda ()
+                 (org-present-small)
+                 (org-remove-inline-images)
+                 (org-present-show-cursor)
+                 (org-present-read-write)
+                 (setq org-hide-emphasis-markers nil)))))
+#+END_SRC
 
-(You may need to install org-present from [[https://orgmode.org/worg/org-contrib/][org-plus-contrib]] first.)
+We can start the presentation with M-x org-present. Then we could use
+left and right keys to move from one headline to another and C-c C-q
+to quit. As in a standard presentation we can display images. And
+thanks to Org, we can also evaluate code blocks with C-c C-c.
+
+(The [[https://github.com/syl20bnr/spacemacs/blob/c7a103a772d808101d7635ec10f292ab9202d9ee/layers/%252Bemacs/org/packages.el#L29][org layer]] of Spacemacs already packages org-present. For others,
+you may need to install it from [[https://melpa.org][melpa]] first.)
 
 * Example 5: Write and test your lab with Babel
 :PROPERTIES:
@@ -436,18 +471,14 @@ scripts (and propagate changes in scripts [[help:org-babel-detangle][back to the
 document]]) in conjunction with the support of [[info:org#Noweb%20reference%20syntax][noweb]] syntax for literate
 programming and reproducible research.
 
-This section give you a first glimpse. Thus, I recommend to read the
-[[info:org#Working%20with%20source%20code][working with source code]] org manual for further
+This section gives you a glimpse of Org Babel. I recommend the reading
+of [[info:org#Working%20with%20source%20code][working with source code]] org manual as reference documentation.
 
 ** The noweb syntax
 - Intro to babel (Python+R ?)
 - Use org-present
-- Export to HTML for students with/without answers
-  - Through EXCLUDE_TAGS
 
 ** Application to lab
-
-
 Interpreting results in Org+Babel+Python to HTML.
 
 * Resources to go further

@@ -199,11 +199,47 @@ M-x org-agenda to see the week's tasks
   (org-table-export "/tmp/org-table.csv" "orgtbl-to-csv"))
 #+END_SRC
 
-* Example 4: Write TP+Slides
-- Intro to babel (Python+R ?)
-- Use org-present
-- Export to HTML for students with/without answers
-  - Through EXCLUDE_TAGS
+* Example 4: Your tutorial in one document
+A class tutorial in CS is made of:
 
-* Example 5: Discovery experiment
-Interpreting results in Org+Babel+Python to HTML.
+- A file with instructions/questions (printable, publishable online)
+- A script file with question solutions
+- Some slide with lecture notions
+
+/One Org document to rule them all/
+
+** A tutorial of mine
+- Headline:
+  + An instruction (e.g., Requirements)
+  + A question (e.g., Excercise: Start & Operate Virtualized Env.)
+  + A lecture notion (e.g., What is Virtualization)
+- Printable and online publishable for free with C-c C-e
+- ~solution~ tag with ~EXCLUDE_TAGS~ setting to hide solutions
+  #+BEGIN_SRC org
+  ,#+EXCLUDE_TAGS: solution
+  #+END_SRC
+
+** org-present to give presentations
+#+BEGIN_SRC elisp
+(eval-after-load "org-present"
+  '(progn
+     (add-hook 'org-present-mode-hook
+               (lambda ()
+                 (org-present-big)
+                 (org-display-inline-images)
+                 (org-present-hide-cursor)
+                 (org-present-read-only)
+                 (setq org-hide-emphasis-markers t)))
+     (add-hook 'org-present-mode-quit-hook
+               (lambda ()
+                 (org-present-small)
+                 (org-remove-inline-images)
+                 (org-present-show-cursor)
+                 (org-present-read-write)
+                 (setq org-hide-emphasis-markers nil)))))
+#+END_SRC
+
+M-x org-present
+
+* Example 5: Write and test your lab with Babel
+Babel: write, execute and connect blocks of source code.
