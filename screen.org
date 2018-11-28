@@ -15,7 +15,8 @@
 #+END_SRC
 
 * Emacs is not just a text editor
-Emacs is a Lisp virtual machine made for manipulating text.
+Emacs is a Lisp virtual machine made
+for manipulating text.
 
 (progn
   (search-backward "Lisp" nil t 2)
@@ -28,11 +29,13 @@ We can call external processes just as easily:
   (forward-char)
   (call-process "ls" nil t t "/"))
 
-Emacs is not an editor that you just use, but one that /grows/ with you.
+Emacs is not an editor that you just use,
+but one that /grows/ with you.
 
 - It's portable and runs basically everywhere.
 - It's fully customizable.
-- It's self-documented: [[info:Emacs][User manual]]  [[info:ELisp][Emacs Lisp manual]]
+- It's self-documented: [[info:Emacs][User manual]]
+   [[info:ELisp][Emacs Lisp manual]]
 
 * Org overview
 It's like markdown, but better.
@@ -86,7 +89,7 @@ return sorted([5, 2, 4, 3, 1])
 ** You should keep log too!
 Keeping a log has immediate benefits:
 
-- Writing down your thoughts can help clarifying them
+- Writing down your thoughts help clarifying them
 - It's a vault for information you may need later
 - Seeing your effort helps keeping motivated
 
@@ -195,7 +198,7 @@ M-x org-agenda to see the week's tasks
 ** Exporting to CSV
 #+BEGIN_SRC elisp :results value silent
 (save-excursion
-  (search-backward "Brynhildr")
+  (search-backward "Brynhildr" nil t 2)
   (org-table-export "/tmp/org-table.csv" "orgtbl-to-csv"))
 #+END_SRC
 

@@ -374,7 +374,7 @@ with inferior programs.
 
 #+BEGIN_SRC elisp :results value silent
 (save-excursion
-  (search-backward "Brynhildr")
+  (search-backward "Brynhildr" nil t 2)
   (org-table-export "/tmp/org-table.csv" "orgtbl-to-csv"))
 #+END_SRC
 
