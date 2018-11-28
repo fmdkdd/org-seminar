@@ -461,15 +461,18 @@ you may need to install it from [[https://melpa.org][melpa]] first.)
 :CUSTOM_ID: ex:blog
 :END:
 
-** A quick, /quick/ intro to Org Babel
+** Org Babel
 [[https://orgmode.org/worg/org-contrib/babel/][Babel]] is the Org ability to write, execute and connect blocks of
-source code in a Org document. Features include evaluating source code
-in one of the 40 [[info:org#Languages][supported language]] (emacs-lisp, python, even Graphviz
-dot); Formatting evaluation output as text, table, html, code, ... and
-pass it to another block; Extracting source code blocks in executable
-scripts (and propagate changes in scripts [[help:org-babel-detangle][back to the original Org
-document]]) in conjunction with the support of [[info:org#Noweb%20reference%20syntax][noweb]] syntax for literate
-programming and reproducible research.
+source code in a Org document. Features include /evaluating/ source
+code in one of the 40 [[info:org#Languages][supported language]] (emacs-lisp, python, even
+Graphviz dot); Formatting evaluation output as text, table, html,
+code, ... and pass it to another block; /Tangling/ to extract source
+code blocks in executable scripts (and propagate changes in scripts
+[[help:org-babel-detangle][back to the original Org document]]); And support of the [[info:org#Noweb%20reference%20syntax][noweb]] syntax to
+produce human readable source code for literate programming.
+
+# in conjunction with the support of [[info:org#Noweb%20reference%20syntax][noweb]] syntax for literate
+# programming and reproducible research.
 
 This section gives you a glimpse of Org Babel. I recommend the reading
 of [[info:org#Working%20with%20source%20code][working with source code]] org manual as reference documentation.

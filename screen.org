@@ -212,6 +212,8 @@ A class tutorial in CS is made of:
 /One Org document to rule them all/
 
 ** A tutorial of mine
+See https://rcherrueau.github.io/teaching/virt2018/index.org
+
 - Headline:
   + An instruction (e.g., Requirements)
   + A question (e.g., Excercise: Start & Operate Virtualized Env.)
