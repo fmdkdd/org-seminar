@@ -1,3 +1,5 @@
+# -*- fill-column: 50; -*-
+
 #+BEGIN_SRC elisp :results silent
 (defun sync-heading-with-buffer ()
   "Move to the same heading in another buffer."
@@ -203,28 +205,33 @@ M-x org-agenda to see the week's tasks
 #+END_SRC
 
 * Example 4: Your tutorial in one document
-A class tutorial in CS is made of:
+A tutorial in CS is made of:
 
-- A file with instructions/questions (printable, publishable online)
-- A script file with question solutions
-- Some slide with lecture notions
+- A file with instructions/questions (printable,
+  publishable online)
+- A script with question solutions
+- Some slides with lecture notions
 
 /One Org document to rule them all/
 
 ** A tutorial of mine
-See https://rcherrueau.github.io/teaching/virt2018/index.org
+https://rcherrueau.github.io/teaching/virt2018/index.org
 
 - Headline:
   + An instruction (e.g., Requirements)
-  + A question (e.g., Excercise: Start & Operate Virtualized Env.)
-  + A lecture notion (e.g., What is Virtualization)
-- Printable and online publishable for free with C-c C-e
-- ~solution~ tag with ~EXCLUDE_TAGS~ setting to hide solutions
+  + A question (e.g., Excercise: Start & Operate
+    Virtualized Env.)
+  + A lecture notion (e.g., What is
+    Virtualization)
+- Printable and online publishable for free with
+  C-c C-e
+- ~solution~ tag with ~EXCLUDE_TAGS~ setting to
+  hide solutions
   #+BEGIN_SRC org
   ,#+EXCLUDE_TAGS: solution
   #+END_SRC
 
-** org-present to give presentations
+** org-present for a step by step presentation
 #+BEGIN_SRC elisp
 (eval-after-load "org-present"
   '(progn
@@ -244,7 +251,62 @@ See https://rcherrueau.github.io/teaching/virt2018/index.org
                  (setq org-hide-emphasis-markers nil)))))
 #+END_SRC
 
-M-x org-present
+M-x org-present, then left/right and C-c C-q to
+quit.
 
 * Example 5: Write and test your lab with Babel
-Babel: write, execute and connect blocks of source code.
+Write, execute and connect blocks of source code
+
+** Org Babel for literate programming
+:PROPERTIES:
+:header-args: :noweb yes :shebang #!/usr/bin/env bash
+:END:
+/Literate programming/ with block tangling in
+executable scripts: C-c C-v t
+#+BEGIN_SRC sh :tangle "org-babel-rocks.sh"
+<<thing>> | lolcat
+#+END_SRC
+
+And support of [[info:org#Noweb%20reference%20syntax][noweb]] syntax to omit/postpone
+explanation of a definition and produce *humane
+readable doc*
+#+BEGIN_SRC sh :noweb-ref thing
+figlet "Org Babel Rocks"
+#+END_SRC
+
+** EnOS Lab with literate programming
+- [[https://enos.readthedocs.io/en/4.2.1/tutorial/index.html][G5k lab]]
+- [[https://github.com/BeyondTheClouds/enos/tree/cfc9c92c7a06e68475b7c906623af86f61b1adc7/tests/functionnal/tests/tutorial][Executables scripts]]
+- [[https://raw.githubusercontent.com/BeyondTheClouds/enos/stable/queens/docs/tutorial/index.org][Org source document]]
+
+Shell tangling and reStructuredText export with
+C-c C-c
+#+BEGIN_SRC elisp
+(org-babel-tangle)
+(load-file "~/.emacs.d/private/ox-rst.el")
+(require 'ox-rst)
+(org-rst-export-to-rst nil)
+#+END_SRC
+
+** Org Babel for reproducible research
+Produce a complete report with:
+- Experiment data
+- Analysis code
+- Results
+
+Relies on session to seamlessly share variables of
+one source code block
+#+BEGIN_SRC python :session my-xp :results none
+variable = "var in session"
+#+END_SRC
+with another
+#+BEGIN_SRC python :session my-xp
+variable.upper()
+#+END_SRC
+
+#+RESULTS:
+: VAR IN SESSION
+
+** Discovery Blog as reproducible research
+- [[https://beyondtheclouds.github.io/blog/openstack/cockroachdb/2018/06/04/evaluation-of-openstack-multi-region-keystone-deployments.html][Discovery blog]]
+- [[https://raw.githubusercontent.com/rcherrueau/juice/notebook/analyses/notebook.org][Org source document]]
