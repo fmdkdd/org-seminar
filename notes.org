@@ -398,23 +398,26 @@ implies modifications in others. Fortunately, Org is powerful enough
 to produce all of these in one document.
 
 ** A tutorial of mine
-Let's look at a [[https://rcherrueau.github.io/teaching/virt2018/index.org][tutorial]] of mine in Org. Every top-level headline is
-either a tutorial instruction (e.g., Requirements, Setup with Vagrant
-tool), a question (e.g., Exercise: Start & Operate Virtualized Env.)
-or a lecture notion (e.g., What is Virtualization).
+Let's look at a [[https://rcherrueau.github.io/teaching/virt2018/index.org][tutorial]] of mine in Org. Every time, I stick with the
+following structure: a top-level headline is either a tutorial
+instruction (e.g., Requirements), a question (e.g., Exercise: Start &
+Operate Virtualized Env.) or a lecture notion (e.g., What is
+Virtualization).
 
-We can easily call [[help:org-latex-export-to-pdf][~org-latex-export-to-pdf~]] to export the document as
-index.pdf and print it. We can also call [[help:org-html-export-to-html][~org-html-export-to-html~]] to
-export the document as index.html and [[https://rcherrueau.github.io/teaching/virt2018/][publish it online]]. More
-generally, We can do C-c C-e ([[help:org-export-dispatch][~org-export-dispatch~]]) to get access to
-common dispatchers and export it into plain text for instance.
+From there, we can easily call [[help:org-latex-export-to-pdf][~org-latex-export-to-pdf~]] to export the
+document as index.pdf and print it. We can also call
+[[help:org-html-export-to-html][~org-html-export-to-html~]] to export the document as index.html and
+[[https://rcherrueau.github.io/teaching/virt2018/][publish it online]] -- the CSS comes from [[http://gongzhitaao.org/orgcss/][Zhitao Gong]]. More generally,
+we can do C-c C-e to get common dispatchers and export the document in
+plain text for instance.
 
-Some of the headlines contain the ~solution~ tag: C-c / m solution
-RET. These headlines encompass exercise solutions. In conjunction with
-the ~#+EXCLUDE_TAGS: solution~ [[info:org#Export%20settings][export settings]], Org hides solutions
-from the export, which is useful to keep track of solutions without
-disclosing them to students. Then, commenting the ~EXCLUDE_TAGS~ out
-reveals the solutions to students when it is time to share them.
+Did you notice that some of the headlines contain the ~solution~ tag:
+C-c / m solution RET. These headlines encompass exercise solutions. I
+keep them in a subtree in conjunction with the ~#+EXCLUDE_TAGS:
+solution~ [[info:org#Export%20settings][export settings]], so that Org hides solutions from the
+export, which is useful to keep track of solutions without disclosing
+them to students. Then, commenting the ~EXCLUDE_TAGS~ out reveals the
+solutions to students when it is time to share them.
 
 #+CAPTION: Comment the ~EXCLUDE_TAGS~ to reveals exercise
 #+CAPTION: solutions from the export
@@ -422,13 +425,20 @@ reveals the solutions to students when it is time to share them.
 # #+EXCLUDE_TAGS: solution
 #+END_SRC
 
-** org-present to give presentations
-[[https://github.com/rlister/org-present][org-present]] is a light-weight simple presentation mode. It turns the
+** org-present for a step by step presentation
+When giving a tutorial, I noticed that going step by step (or headline
+by headline) works well. By giving 10 or 15 minutes per step to
+students, then check it works for everyone, and move to the next step,
+It ensures that no students are left behind. We can achieve this using
+[[https://github.com/rlister/org-present][org-present]].
+
+org-present is a light-weight simple presentation mode. It turns the
 Emacs editor in a presentation engine that displays headings of the
 Org document one after the other. Combining it with the variables that
-hide the symbols and cursor, it turns your Org document into a step by
-step tutorial that looks good on a beamer.
+hide the symbols and cursor (see [[lst:hide-cursor]]), it turns our Org
+document into a step by step tutorial that looks good on a beamer.
 
+#+NAME: lst:hide-cursor
 #+BEGIN_SRC elisp
 (eval-after-load "org-present"
   '(progn
@@ -450,7 +460,7 @@ step tutorial that looks good on a beamer.
 
 We can start the presentation with M-x org-present. Then we could use
 left and right keys to move from one headline to another and C-c C-q
-to quit. As in a standard presentation we can display images. And
+to quit. As in a standard presentation, we can display images. And
 thanks to Org, we can also evaluate code blocks with C-c C-c.
 
 (The [[https://github.com/syl20bnr/spacemacs/blob/c7a103a772d808101d7635ec10f292ab9202d9ee/layers/%252Bemacs/org/packages.el#L29][org layer]] of Spacemacs already packages org-present. For others,
@@ -460,26 +470,111 @@ you may need to install it from [[https://melpa.org][melpa]] first.)
 :PROPERTIES:
 :CUSTOM_ID: ex:blog
 :END:
-
-** A quick, /quick/ intro to Org Babel
 [[https://orgmode.org/worg/org-contrib/babel/][Babel]] is the Org ability to write, execute and connect blocks of
-source code in a Org document. Features include evaluating source code
-in one of the 40 [[info:org#Languages][supported language]] (emacs-lisp, python, even Graphviz
-dot); Formatting evaluation output as text, table, html, code, ... and
-pass it to another block; Extracting source code blocks in executable
-scripts (and propagate changes in scripts [[help:org-babel-detangle][back to the original Org
-document]]) in conjunction with the support of [[info:org#Noweb%20reference%20syntax][noweb]] syntax for literate
-programming and reproducible research.
+source code in an Org document. Features include /evaluating/ source
+code in one of the 40 [[info:org#Languages][supported languages]] (emacs-lisp, python, shell,
+even Graphviz dot); Formatting evaluated output as text, table, HTML,
+code, ... and pass it to another block; /Tangling/ source code blocks
+in executable scripts (and propagate changes in scripts [[help:org-babel-detangle][back to the
+original Org document]]); And support of the [[info:org#Noweb%20reference%20syntax][noweb]] syntax to produce
+human readable source code for literate programming.
 
 This section gives you a glimpse of Org Babel. I recommend the reading
 of [[info:org#Working%20with%20source%20code][working with source code]] org manual as reference documentation.
 
-** The noweb syntax
-- Intro to babel (Python+R ?)
-- Use org-present
+** Org Babel for literate programming
+:PROPERTIES:
+:header-args: :noweb yes :shebang #!/usr/bin/env bash
+:END:
+As an example of literate programming, let's consider the following
+source code block that takes a /thing/ -- forget about what a /thing/
+is right now -- and pass it to [[https://github.com/busyloop/lolcat][~lolcat~]] (a modern replacement to
+~cat~). The ~:tangle~ header says to extract the source code from the
+block and put it into a script called ~org-babel-rocks.sh~ for a later
+execution by a computer.
 
-** Application to lab
-Interpreting results in Org+Babel+Python to HTML.
+#+BEGIN_SRC sh :tangle "org-babel-rocks.sh"
+<<thing>> | lolcat
+#+END_SRC
+
+Following blocks to the same target file will be concatenated during
+tangling in the order at which they appear in the Org document.
+
+This makes Org a formidable tool to produce /humane readable
+documentation/. This, plus the support of [[info:org#Noweb%20reference%20syntax][noweb]] syntax. Noweb lets us
+take out a definition from the source code block to omit or postpone
+its explanation. For instance here, we say that the thing given to
+~lolcat~ is an ASCII art of the string ~"Org Babel Rocks"~ generated
+with the [[https://github.com/cmatsuoka/figlet][~figlet~]] program.
+
+#+BEGIN_SRC sh :noweb-ref thing
+figlet "Org Babel Rocks"
+#+END_SRC
+
+We can tangle the program with C-c C-v t and see it at
+[[file:org-babel-rocks.sh]]. Note that the file is executable so we can
+run it.
+
+** EnOS Lab with literate programming
+As a concrete example, see the step by step [[https://enos.readthedocs.io/en/4.2.1/tutorial/index.html][G5k lab]] of the [[https://github.com/BeyondTheClouds/enos][EnOS]] tool.
+
+As developers of EnOS, we need a lab to instruct users on how to use
+EnOS. And we want this lab to be /executable/ to ensure that every
+time we change the source of EnOS, the lab still makes sense.
+
+Of course, we don't want to maintain a side script that reflects the
+lab. Keeping it consistent with the lab is hazardous. Rather, we want
+to extract each shell commands and configuration files from the lab.
+Thus, we can execute them on our continuous integration (CI) system
+and validate the lab.
+
+Once again, an [[https://raw.githubusercontent.com/BeyondTheClouds/enos/stable/queens/docs/tutorial/index.org][Org document]] does the trick. Every source code block of
+shell from the lab comes with the ~:tangle~ header. Hence doing C-c
+C-v t produces an [[https://github.com/BeyondTheClouds/enos/tree/cfc9c92c7a06e68475b7c906623af86f61b1adc7/tests/functionnal/tests/tutorial/enos-node.sh][executable script version]] of the lab.
+
+In this case, we want both tangling the shell executable script and
+exporting the reStructuredText (rst) documentation. One way to get it
+is by doing C-c C-v t (for tangling) and then C-c C-e r r (for rst).
+The Emacs lisp code at the end of the document does exactly that.
+First tangling the script, and then exporting the lab.
+
+#+BEGIN_SRC elisp
+(org-babel-tangle)
+(load-file "~/.emacs.d/private/ox-rst.el")
+(require 'ox-rst)
+(org-rst-export-to-rst nil)
+#+END_SRC
+
+** Org Babel for reproducible research
+The idea of /reproducible research/ is to produce a complete report
+with experiment data, analysis code and results. Thus, a reviewer can
+dig into your contribution, e.g., understand what is behind an average
+value or change the /scale/ of a graph.
+
+Once again, Babel provides a powerful tool call ~session~. With
+session, we can seamlessly share a variable of one source code block
+#+BEGIN_SRC python :session my-xp :results none
+variable = "var in session"
+#+END_SRC
+with another.
+#+BEGIN_SRC python :session my-xp
+variable.upper()
+#+END_SRC
+
+** Discovery Blog as reproducible research
+As a concrete example, see this [[https://beyondtheclouds.github.io/blog/openstack/cockroachdb/2018/06/04/evaluation-of-openstack-multi-region-keystone-deployments.html][Discovery blog article]]. The blog does
+the performance evaluation of distributed databases in the context of
+OpenStack. If we go through the article, we see:
+- Experimental protocol and tested variables.
+- Code to analyze experimental data.
+- Graph results and interpretations (+ pending TODOs).
+
+The [[https://raw.githubusercontent.com/rcherrueau/juice/notebook/analyses/notebook.org][original document]] relies on Babel code evaluation and session to
+get instant feedback of the analysis. The benefit is twice:
+- First, it produces a complete report with experiment data, analysis
+  code and result.
+- Second, we can change the analysis and live play with it to find the
+  best representation that suits the subject we want to highlight.
 
 * Resources to go further
 ** Starting with Emacs
@@ -512,8 +607,6 @@ include it in your own configuration.  That's how your Emacs gets tailored to
 your needs.
 
 ** Links
-- Link to Example 5 source
-
 - [[https://codearsonist.com/reading-for-programmers][An article]] on how to manage your bibtex citations and PDF notes using Emacs +
   [[https://github.com/politza/pdf-tools][PDF tools]].
 - [[https://github.com/alegrand/SMPE][A course]] on reproducible research (not Org-specific).
